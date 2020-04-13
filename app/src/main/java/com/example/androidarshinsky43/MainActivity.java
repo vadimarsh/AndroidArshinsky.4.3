@@ -71,12 +71,22 @@ public class MainActivity extends AppCompatActivity {
         mBtnOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mStartDate > mEndDate) {
-                    Toast.makeText(MainActivity.this, "Ошибка", Toast.LENGTH_LONG).show();
-                    mChooseStartDate.setText("Дата-время старта задачи:");
-                    mChooseEndDate.setText("Дата-время окончания задачи:");
-                } else {
+                try {
+                    if (mEndDateTxt == null || mEndDateTxt.isEmpty() || mStartDateTxt == null || mStartDateTxt.isEmpty()) {
+                        throw new RuntimeException("Необходимо выбрать дату старта и дату конца");
+                    }
+                    if (mStartDate > mEndDate) {
+                        mStartDate = mEndDate = 0;
+                        mStartDateTxt ="";
+                        mEndDateTxt = "";
+                        mChooseStartDate.setText("Дата-время старта задачи:");
+                        mChooseEndDate.setText("Дата-время окончания задачи:");
+                        throw new RuntimeException("Дата старта не может быть раньше даты окончания");
+                    }
                     Toast.makeText(MainActivity.this, "старт: " + mStartDateTxt + " окончаниe: " + mEndDateTxt, Toast.LENGTH_LONG).show();
+                }
+                catch (RuntimeException ex){
+                    Toast.makeText(MainActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
